@@ -1,112 +1,138 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
 import React from 'react';
-import type {Node} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import {SafeAreaView} from 'react-native';
+import {WebView} from 'react-native-webview';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-const Section = ({children, title}): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
+const selectProgrammingLanguage = () => {
+  const languages = [
+    'Rust',
+    'Python',
+    'JavaScript',
+    'TypeScript',
+    'C++',
+    'Go',
+    'R',
+    'Java',
+    'PHP',
+    'Kotlin',
+  ];
+  const randomInt = Math.floor(Math.random() * languages.length);
+  return languages[randomInt];
 };
 
-const App: () => Node = () => {
-  const isDarkMode = useColorScheme() === 'dark';
+const WebviewwithinjectJavaScriptMethod = () => {
+  let counter = 1;
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  const script = () => {
+    const selectedLanguage = selectProgrammingLanguage();
+    counter += 1;
+    const newURL = 'https://google.com';
+    const redirectTo = 'window.location = "' + newURL + '"';
+
+    if (counter <= 10) {
+      return `
+          if (document.body.style.backgroundColor === 'white') {
+            document.body.style.backgroundColor = 'black'
+            document.body.style.color = 'white'
+          } else {
+            document.body.style.backgroundColor = 'white'
+            document.body.style.color = 'black'
+          };
+
+          document.getElementById("h2_element").innerHTML = "${selectedLanguage}?";
+          window.ReactNativeWebView.postMessage("counter: ${counter}");
+          true;  // note: this is required, or you'll sometimes get silent failures
+      `;
+    } else if (counter === 11) {
+      return `
+          window.ReactNativeWebView.postMessage("you are now getting redirected!");
+          ${redirectTo};
+          true;  // note: this is required, or you'll sometimes get silent failures
+        `;
+    } else {
+      return null;
+    }
   };
 
+  setInterval(() => {
+    this.webref.injectJavaScript(script());
+  }, 2000);
+
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
+    <SafeAreaView style={{flex: 1}}>
+      <WebView
+        source={{html: customHTML}}
+        ref={r => (this.webref = r)}
+        onMessage={event => {
+          console.log(event.nativeEvent.data);
+        }}
+        injectedJavaScript={runFirst}
+        injectedJavaScriptBeforeContentLoaded={runBeforeFirst}
+      />
     </SafeAreaView>
   );
 };
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+const customHTML = `
+      <body style="display:flex; flex-direction: column;justify-content: center; 
+        align-items:center; background-color: black; color:white; height: 100%;">
+          <h1 style="font-size:100px; padding: 50px; text-align: center;" 
+          id="h1_element">
+            This is simple html
+          </h1>
+          <h2 style="display: block; font-size:80px; padding: 50px; 
+          text-align: center;" id="h2_element">
+            This text will be changed later!
+          </h2>
+       </body>`;
+const runFirst = `
+       setTimeout(function() { 
+           window.alert("Click me!");
+           document.getElementById("h1_element").innerHTML = 
+           "What is your favourite language?";
+           document.getElementById("h2_element").innerHTML =
+           "We will see!";
+         }, 1000);
+       true; // note: this is required, or you'll sometimes get silent failures
+     `;
 
-export default App;
+const runBeforeFirst = `
+       window.isNativeApp = true;
+       true; // note: this is required, or you'll sometimes get silent failures
+   `;
+/// 3. Communicating between JavaScript and Native
+const webViewWithJavascript = () => {
+  return (
+    <SafeAreaView style={{flex: 1}}>
+      <WebView
+        source={{html: customHTML}}
+        onMessage={event => {}}
+        injectedJavaScript={runFirst}
+        injectedJavaScriptBeforeContentLoaded={runBeforeFirst}
+      />
+    </SafeAreaView>
+  );
+};
+
+/// 2. Writing the basic inline HTML
+const customHTMLWebView = () => {
+  return (
+    <SafeAreaView style={{flex: 1}}>
+      <WebView source={{html: customHTML}} />
+    </SafeAreaView>
+  );
+};
+
+/// 1. Creating the basic URL structure
+const basicURLWebview = () => {
+  return (
+    <SafeAreaView style={{flex: 1}}>
+      <WebView
+        source={{
+          uri: 'https://google.com/',
+        }}
+      />
+    </SafeAreaView>
+  );
+};
+
+export default WebviewwithinjectJavaScriptMethod;
