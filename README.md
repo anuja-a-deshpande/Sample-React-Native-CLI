@@ -1,13 +1,13 @@
 # Sample Project with React-Native-CLI
 
 1. Webview:
-   1. Basic URL Webview
-   2. Custom HTML WebView
-   3. WebView With Javascript
-   4. Webview with "injectJavaScript" Method
+   1. Basic URL Webview: :white_check_mark:
+   2. Custom HTML WebView :white_check_mark:
+   3. WebView With Javascript :white_check_mark:
+   4. Webview with "injectJavaScript" Method :white_check_mark:
 2. State management:
-   1. Hooks
-   2. Redux
+   1. Hooks :white_check_mark:
+   2. Redux :white_check_mark:
    3. Recoil
    4. MobX
 3. MVVM
