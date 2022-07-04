@@ -6,9 +6,10 @@
    3. WebView With Javascript
    4. Webview with "injectJavaScript" Method
 2. State management:
-   1. React Context
+   1. Hooks
    2. Redux
-   3. Props and state.props
+   3. Recoil
+   4. MobX
 3. MVVM
 4. MVI
 5. state management solutions
